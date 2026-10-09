@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+      INTERNET is required by the in-app updater: when the user configures a
+      football-data.org token and/or a The Odds API key, the app downloads the
+      latest results, standings and published odds to keep the snapshot fresh.
+      Without a configured key nothing is fetched and the app stays fully
+      offline on the bundled data. The credentials are entered once by the user
+      and stored in the WebView's localStorage, never inside the APK.
+
+      WRITE_EXTERNAL_STORAGE is only needed on API 24-28, where saving into the
+      public Downloads folder goes through the legacy filesystem API. From
+      API 29 the image is written to MediaStore.Downloads instead, and scoped
+      storage makes this permission meaningless, hence maxSdkVersion="28".
+
+      REQUEST_INSTALL_PACKAGES backs the self-update: the release downloaded
+      from GitHub Releases is handed to the system installer, which otherwise
+      refuses packages coming from outside an app store.
+    -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+    <!-- Round reminder: runtime-requested on API 33+, ignored below. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.SuperTipstersOscar">
+
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|uiMode|density|fontScale"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.SuperTipstersOscar"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Exposes cacheDir to the package installer for the self-update APK. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- Posts the "matchday finished" reminder scheduled by the page. -->
+        <receiver
+            android:name=".NotifyReceiver"
+            android:exported="false" />
+
+        <!-- Home-screen widget with the next match and the saved forecasts. -->
+        <receiver
+            android:name=".TipstersWidget"
+            android:exported="true"
+            android:label="@string/widget_title">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_tipsters_info" />
+        </receiver>
+    </application>
+
+</manifest>

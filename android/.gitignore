@@ -1,0 +1,10 @@
+# Signing credentials — never commit these.
+keystore.properties
+keystore/
+*.jks
+*.keystore
+
+# Local machine config.
+local.properties
+.cxx/
+build/

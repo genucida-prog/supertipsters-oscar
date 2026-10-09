@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Hex translations of the prototype oklch() tokens. Android resources cannot
+  express oklch(), so these are the sRGB equivalents computed from the exact
+  same L/C/H values:
+
+    accent      oklch(79%  0.155 152) -> #61D688
+    accent_ink  oklch(16%  0.035 152) -> #021106
+    bg          oklch(15.5% 0.012 262)-> #090C11
+    surface_2   oklch(23%  0.016 262)-> #191D25
+    fg          oklch(97%  0.004 262)-> #F4F5F8
+    muted       oklch(73%  0.014 262)-> #A3A8B1
+-->
+<resources>
+    <color name="accent">#FF61D688</color>
+    <color name="accent_ink">#FF021106</color>
+    <color name="bg">#FF090C11</color>
+    <color name="surface_2">#FF191D25</color>
+    <color name="fg">#FFF4F5F8</color>
+    <color name="muted">#FFA3A8B1</color>
+    <color name="black">#FF000000</color>
+</resources>

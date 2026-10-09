@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Legacy launcher icon for API 24-25, which predate <adaptive-icon>. There is no
+  background layer on those releases, so the accent badge from BRAND.mark is
+  drawn here as a rounded rect (1.25, 1.25, 29.5, 29.5, rx 8.5) together with
+  the ink strokes.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="32"
+    android:viewportHeight="32">
+    <path
+        android:fillColor="#61D688"
+        android:pathData="M9.75,1.25 h12.5 a8.5,8.5 0 0 1 8.5,8.5 v12.5 a8.5,8.5 0 0 1 -8.5,8.5 h-12.5 a8.5,8.5 0 0 1 -8.5,-8.5 v-12.5 a8.5,8.5 0 0 1 8.5,-8.5 Z" />
+    <path
+        android:pathData="M7.8,11.8 L13,9.4 L17.4,11.2 L23.4,7.4"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#021106"
+        android:strokeWidth="2.3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M10.8,22 a5.2,5.2 0 1,0 10.4,0 a5.2,5.2 0 1,0 -10.4,0 Z"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#021106"
+        android:strokeWidth="2" />
+    <path
+        android:fillColor="#021106"
+        android:pathData="M16,19.82 L18.07,21.33 L17.28,23.76 L14.72,23.76 L13.93,21.33 Z" />
+</vector>
