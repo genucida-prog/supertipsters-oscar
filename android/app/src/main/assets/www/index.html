@@ -530,45 +530,49 @@
 
     /* Product/odds grid in match cards */
     .odds-grid {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 6px;
       margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--line-soft);
+    }
+    @media (min-width: 480px) {
+      .odds-grid { grid-template-columns: repeat(3, 1fr); }
     }
     .odds-item {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      flex: 1;
-      min-width: 0;
-      padding: 8px 6px;
+      padding: 10px 6px;
       border: 1px solid var(--line-soft);
       border-radius: var(--r-md);
-      background: var(--surface-2);
-      transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+      background: var(--surface);
+      transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
     }
     .odds-item:hover {
       transform: translateY(-1px);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border-color: var(--accent);
     }
     .odds-item:focus-visible {
       outline: 2px solid var(--accent);
       outline-offset: 1px;
     }
     .odds-item .odd-name {
-      font-size: 9px;
-      letter-spacing: 0.05em;
+      font-size: 10px;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
       color: var(--muted);
-      margin-bottom: 3px;
+      margin-bottom: 4px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 100%;
     }
     .odds-item .odd-val {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
       letter-spacing: -0.01em;
       line-height: 1;
@@ -4880,21 +4884,20 @@ function readHash() {
     function oddsGrid(l, m) {
       var entry = oddsEntry(m.id);
       if (!entry || !entry.books) { return ''; }
-      var books = ODDS_KEYS.filter(function (k) { return entry.books[k]; }).slice(0, 3);
+      var books = ODDS_KEYS.filter(function (k) { return entry.books[k]; });
       if (!books.length) { return ''; }
-      var items = books.map(function (k) {
+      // Agrupar por selección: cada casa muestra 1, X, 2
+      var cells = [];
+      books.forEach(function (k) {
         var name = ODDS.bookName[k] || k;
         var h = selPrice(entry.books[k], 'h');
         var d = selPrice(entry.books[k], 'd');
         var a = selPrice(entry.books[k], 'a');
-        return '<div class="odds-item is-home"><span class="odd-name">' + esc(name) + '</span>' +
-          '<span class="odd-val">' + (h ? dec(h) : '—') + '</span></div>' +
-          '<div class="odds-item is-draw"><span class="odd-name">X</span>' +
-          '<span class="odd-val">' + (d ? dec(d) : '—') + '</span></div>' +
-          '<div class="odds-item is-away"><span class="odd-name">2</span>' +
-          '<span class="odd-val">' + (a ? dec(a) : '—') + '</span></div>';
-      }).join('');
-      return '<div class="odds-grid">' + items + '</div>';
+        cells.push('<div class="odds-item is-home" role="group" aria-label="' + esc(name) + ' cuota local"><span class="odd-name">' + esc(name) + '</span><span class="odd-val">' + (h ? dec(h) : '—') + '</span></div>');
+        cells.push('<div class="odds-item is-draw" role="group" aria-label="' + esc(name) + ' cuota empate"><span class="odd-name">X</span><span class="odd-val">' + (d ? dec(d) : '—') + '</span></div>');
+        cells.push('<div class="odds-item is-away" role="group" aria-label="' + esc(name) + ' cuota visitante"><span class="odd-name">2</span><span class="odd-val">' + (a ? dec(a) : '—') + '</span></div>');
+      });
+      return '<div class="odds-grid">' + cells.join('') + '</div>';
     }
 
     function statusLabel(st) {
