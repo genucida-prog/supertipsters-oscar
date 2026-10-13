@@ -538,17 +538,14 @@
     .seg-a { background: var(--red); }
     /* Theme toggle button */
     .theme-toggle {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      z-index: 50;
-      width: 40px;
-      height: 40px;
+      flex: none;
+      width: 36px;
+      height: 36px;
       border: 1px solid var(--line);
       border-radius: 50%;
       background: var(--surface-2);
       color: var(--fg);
-      font-size: 18px;
+      font-size: 16px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -1147,9 +1144,8 @@
     <span class="hardware-button volume" aria-hidden="true"></span>
     <span class="hardware-button power" aria-hidden="true"></span>
 
-     <section class="phone-screen" data-phone-screen>
-       <button class="theme-toggle" id="themeToggle" data-action="theme" aria-label="Cambiar tema" title="Cambiar tema claro/oscuro">☀️</button>
-       <main class="phone-content" data-phone-content role="main" aria-label="Contenido de la aplicación">
+      <section class="phone-screen" data-phone-screen>
+        <main class="phone-content" data-phone-content role="main" aria-label="Contenido de la aplicación">
         <!-- APP CONTENT START -->
         <div class="app" id="app"></div>
         <!-- APP CONTENT END -->
@@ -4833,6 +4829,7 @@ function readHash() {
         (emblem ? '<span class="emblem">' + emblem + '</span>' : '') +
         '<span class="titles"><span class="kicker">' + esc(kicker) + '</span><h1>' + esc(title) + '</h1></span>' +
         brandPlaque() +
+        '<button class="theme-toggle" id="themeToggle" data-action="theme" aria-label="Cambiar tema" title="Cambiar tema claro/oscuro">☀️</button>' +
         '</header>';
     }
 
