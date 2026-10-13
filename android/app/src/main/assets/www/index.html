@@ -4753,7 +4753,7 @@ function saveTicket(list) {
     }
     var picks = {};
     try { picks = JSON.parse(localStorage.getItem(STORAGE)) || {}; } catch (e) { picks = {}; }
-     function savePicks() {
+    function savePicks() {
        try { localStorage.setItem(STORAGE, JSON.stringify(picks)); } catch (e) { /* storage unavailable */ }
      }
       function toggleTheme() {
