@@ -304,6 +304,28 @@
       --phone-system-fg: var(--fg);
     }
 
+    /* Modo claro */
+    :root.light {
+      --bg:         oklch(98% 0.002 262);
+      --surface:    oklch(95% 0.003 262);
+      --surface-2:  oklch(91% 0.004 262);
+      --surface-3:  oklch(87% 0.005 262);
+      --line:       oklch(82% 0.006 262);
+      --line-soft:  oklch(88% 0.004 262);
+      --fg:         oklch(15% 0.012 262);
+      --fg-2:       oklch(28% 0.010 262);
+      --muted:      oklch(45% 0.008 262);
+      --accent:     oklch(45% 0.145 152);
+      --accent-dim: oklch(45% 0.145 152 / 0.12);
+      --accent-ink: oklch(97% 0.004 152);
+      --amber:      oklch(55% 0.155 84);
+      --amber-dim:  oklch(55% 0.155 84 / 0.12);
+      --amber-ink:  oklch(97% 0.004 84);
+      --red:        oklch(55% 0.185 22);
+      --red-dim:    oklch(55% 0.185 22 / 0.12);
+      --red-ink:    oklch(97% 0.004 22);
+    }
+
     .app { height: 100%; color: var(--fg); font-family: var(--font-sans); font-size: 16px; line-height: 1.5; }
     .app-shell { background: var(--bg); }
     .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
@@ -505,10 +527,74 @@
 
     .probbar { display: flex; height: 5px; gap: 2px; }
     .probbar .seg { display: block; height: 5px; border-radius: 2px; }
+
+    /* Product/odds grid in match cards */
+    .odds-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 4px; }
+    .odds-item { padding: 6px 8px; border: 1px solid var(--line-soft); border-radius: var(--r-md); background: var(--surface-2); text-align: center; }
+    .odds-item .odd-name { font-size: 10px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .odds-item .odd-val { font-size: 13px; font-weight: 600; color: var(--accent); }
     .seg-h { background: var(--accent); }
     .seg-d { background: var(--amber); }
     .seg-a { background: var(--red); }
-    .legend { display: block; font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); }
+    /* Theme toggle button */
+    .theme-toggle {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 50;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: var(--surface-2);
+      color: var(--fg);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background var(--dur) var(--ease), transform var(--dur) var(--ease);
+    }
+    .theme-toggle:hover {
+      background: var(--surface-3);
+      transform: scale(1.05);
+    }
+    .theme-toggle:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* Product cards two-column grid */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .product-card {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid var(--line-soft);
+      border-radius: var(--r-lg);
+      background: var(--surface);
+      text-align: center;
+    }
+    .product-card .product-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--fg);
+    }
+    .product-card .product-price {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .product-card .product-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
 
     .stat-strip {
       display: grid;
@@ -1061,8 +1147,9 @@
     <span class="hardware-button volume" aria-hidden="true"></span>
     <span class="hardware-button power" aria-hidden="true"></span>
 
-    <section class="phone-screen" data-phone-screen>
-      <main class="phone-content" data-phone-content role="main" aria-label="Contenido de la aplicación">
+     <section class="phone-screen" data-phone-screen>
+       <button class="theme-toggle" id="themeToggle" data-action="theme" aria-label="Cambiar tema" title="Cambiar tema claro/oscuro">☀️</button>
+       <main class="phone-content" data-phone-content role="main" aria-label="Contenido de la aplicación">
         <!-- APP CONTENT START -->
         <div class="app" id="app"></div>
         <!-- APP CONTENT END -->
@@ -4233,12 +4320,15 @@
       wa: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M20.4 11.6a8 8 0 0 1-11.7 6.9L4 20l1.5-4.6A8 8 0 1 1 20.4 11.6Z"/><path d="M9 9.2c0 3 2.4 5.4 5.4 5.4.6 0 1-.5 1-1.1l-1.4-.7-.8.8a4 4 0 0 1-1.6-1.6l.8-.8-.7-1.4c-.6 0-1.1.4-1.1 1"/></svg>',
       tg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M20.5 4 3.5 11l5.2 2M20.5 4l-2.8 15.5-5.4-6.6M20.5 4 8.6 13"/></svg>',
       copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3"/></svg>',
-      save: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 4v10M8 11l4 4 4-4M5 19h14"/></svg>'
-    };
+       save: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 4v10M8 11l4 4 4-4M5 19h14"/></svg>',
+       sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>',
+       moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+     };
 
     var TABS = [
       { id: 'jornadas', label: 'Jornadas', icon: 'calendar' },
       { id: 'pronosticos', label: 'Pronósticos', icon: 'target' },
+      { id: 'historial', label: 'Historial', icon: 'table' },
       { id: 'combinadas', label: 'Combinadas', icon: 'combo' },
       { id: 'tabla', label: 'Tabla', icon: 'table' },
       { id: 'modelo', label: 'Modelo', icon: 'model' }
@@ -4566,6 +4656,9 @@ var leagueHome = avg2(homeGoals, n, 1.35);
     var PICK_PRICE_KEY = { '1': 'h', 'X': 'd', '2': 'a', o15: 'o15', u15: 'u15', o25: 'o25', u25: 'u25', btts: null };
 
     var STORAGE = 'od-pronosticos-2627';
+var THEME_KEY = 'od-theme-2627';
+var THEME = readStored(THEME_KEY) || 'dark';
+document.documentElement.className = THEME === 'light' ? 'light' : '';
 var TICKET_KEY = 'od-ticket-2627';
 var TICKET = [];
 try { TICKET = JSON.parse(localStorage.getItem(TICKET_KEY)) || []; } catch (e) { TICKET = []; }
@@ -4578,9 +4671,16 @@ function saveTicket(list) {
     }
     var picks = {};
     try { picks = JSON.parse(localStorage.getItem(STORAGE)) || {}; } catch (e) { picks = {}; }
-    function savePicks() {
-      try { localStorage.setItem(STORAGE, JSON.stringify(picks)); } catch (e) { /* storage unavailable */ }
-    }
+     function savePicks() {
+       try { localStorage.setItem(STORAGE, JSON.stringify(picks)); } catch (e) { /* storage unavailable */ }
+     }
+      function toggleTheme() {
+        THEME = THEME === 'dark' ? 'light' : 'dark';
+        document.documentElement.className = THEME === 'light' ? 'light' : '';
+        writeStored(THEME_KEY, THEME);
+        var btn = document.getElementById('themeToggle');
+        if (btn) { btn.textContent = THEME === 'light' ? '🌙' : '☀️'; btn.setAttribute('aria-label', THEME === 'light' ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'); }
+      }
 
     var state = { tab: 'jornadas', league: 'PD', md: 0, match: null, club: null, cat: 'o25', cmode: 'auto', book: null, ticket: TICKET, addOpen: false, addLg: 'ALL' };
     var scrollMemory = {};
@@ -4694,8 +4794,29 @@ function readHash() {
         '<span class="seg seg-h" style="flex:' + f.home + '"></span>' +
         '<span class="seg seg-d" style="flex:' + f.draw + '"></span>' +
         '<span class="seg seg-a" style="flex:' + f.away + '"></span></span>' +
-        probLegend(f) +
-        '</button>';
+       probLegend(f) +
+         oddsGrid(l, m) +
+         '</button>';
+    }
+
+    function oddsGrid(l, m) {
+      var entry = oddsEntry(m.id);
+      if (!entry || !entry.books) { return ''; }
+      var books = ODDS_KEYS.filter(function (k) { return entry.books[k]; }).slice(0, 3);
+      if (!books.length) { return ''; }
+      var items = books.map(function (k) {
+        var name = ODDS.bookName[k] || k;
+        var h = selPrice(entry.books[k], 'h');
+        var d = selPrice(entry.books[k], 'd');
+        var a = selPrice(entry.books[k], 'a');
+        return '<div class="odds-item"><span class="odd-name">' + esc(name) + '</span>' +
+          '<span class="odd-val">' + (h ? dec(h) : '—') + '</span></div>' +
+          '<div class="odds-item"><span class="odd-name">X</span>' +
+          '<span class="odd-val">' + (d ? dec(d) : '—') + '</span></div>' +
+          '<div class="odds-item"><span class="odd-name">2</span>' +
+          '<span class="odd-val">' + (a ? dec(a) : '—') + '</span></div>';
+      }).join('');
+      return '<div class="odds-grid">' + items + '</div>';
     }
 
     function statusLabel(st) {
@@ -5170,7 +5291,11 @@ var body = '<div class="rail-label"><span class="t">Mercado</span><span class="m
                 '<span class="k">' + (pr ? dec(pr) : '—') + '</span></button>';
             }).join('') + '</div>';
             var prices = booksWith(x.mid, x.sel.id).slice(0, 8).map(function (k) {
-              return '<span class="price-tag mono">' + esc(ODDS.bookName[k] || k) + ' ' + dec(priceIn(x.mid, x.sel.id, k)) + '</span>';
+              return '<div class="product-card">' +
+                '<span class="product-name">' + esc(ODDS.bookName[k] || k) + '</span>' +
+                '<span class="product-price mono">' + dec(priceIn(x.mid, x.sel.id, k)) + '</span>' +
+                '<span class="product-desc">' + (priceIn(x.mid, x.sel.id, k) ? 'cuota decimal' : 'no disponible') + '</span>' +
+                '</div>';
             }).join('');
             return '<li class="leg is-ticket">' +
               '<div class="leg-hd"><span class="idx mono">' + (i + 1) + '</span>' +
@@ -5179,7 +5304,7 @@ var body = '<div class="rail-label"><span class="t">Mercado</span><span class="m
               ' · ' + esc(x.sel.label) + ' · ' + pct(x.sel.p) + '</span></span>' +
               '<button class="icon-btn" data-action="tdel" data-mid="' + x.mid + '" aria-label="Quitar ' + esc(H.name) + ' — ' + esc(A.name) + '">' + ICON.close + '</button></div>' +
               chips +
-              (prices ? '<div class="price-row">' + prices + '</div>' : '') +
+              (prices ? '<div class="product-grid">' + prices + '</div>' : '') +
               '</li>';
           }).join('') + '</ol>'
         : '';
@@ -5675,6 +5800,62 @@ function shareOpen(size) { shareOpenData(comboShareData(size)); }
       return appBar('Temporada ' + SNAP.season + '/' + String(Number(SNAP.season) + 1).slice(-2), 'Mis pronósticos') +
         '<div class="od-scroll" id="screen"><div class="screen">' +
         '<section class="block">' + stats + '</section>' + content + bankrollCard() + historyCard() + '</div></div>';
+    }
+
+    function screenHistorial() {
+      var hist = readHistory();
+      if (!hist.length) {
+        return appBar('Temporada ' + SNAP.season + '/' + String(Number(SNAP.season) + 1).slice(-2), 'Historial de pedidos') +
+          '<div class="od-scroll" id="screen"><div class="screen">' +
+          '<div class="empty"><span class="t">No hay pedidos guardados</span>' +
+          '<p>Las combinadas que guardes aparecerán aquí con su estado (ganada, perdida o pendiente) y beneficio neto.</p>' +
+          '<button class="btn" data-action="tab" data-tab="combinadas" aria-label="Ir a Combinadas">Ir a Combinadas</button></div></div>';
+      }
+
+      hist = hist.slice().sort(function (a, b) { return a.at < b.at ? 1 : -1; });
+
+      var totalStaked = 0, totalReturned = 0, settled = 0, won = 0, lost = 0;
+      var rows = hist.map(function (h) {
+        var legs = h.legs || [];
+        var st = ticketOutcome(h);
+        var pill = st === 'won' ? '<span class="pill is-good">Ganada</span>'
+          : st === 'lost' ? '<span class="pill is-bad">Perdida</span>'
+            : st === 'pending' ? '<span class="pill is-warn">Pendiente</span>'
+              : '<span class="pill is-flat">Sin resultado</span>';
+        var pl = null;
+        if (h.stake && h.price && (st === 'won' || st === 'lost')) {
+          pl = st === 'won' ? h.stake * h.price - h.stake : -h.stake;
+        }
+        if (h.stake) { totalStaked += h.stake; }
+        if (pl != null) {
+          settled++;
+          totalReturned += pl + h.stake;
+          if (st === 'won') won++;
+          else if (st === 'lost') lost++;
+        }
+        return '<div class="hist-row"><div class="body">' +
+          '<span class="kicker">' + esc(dfLong.format(new Date(h.at))) + ' · ' + legs.length + ' patas</span>' +
+          '<span class="ttl od-clamp-2">' + esc(legs.map(function (x) { return x.label || x.sel; }).join(' · ')) + '</span>' +
+          '<span class="meta mono">' + (h.stake ? 'apuesta ' + eur(h.stake) : 'sin apuesta') + (h.price ? ' · cuota ' + dec(h.price) : '') + '</span>' +
+          '</div><div class="od-stack" style="--od-gap:6px;justify-items:end">' + pill +
+          (pl == null ? '' : '<span class="mono ' + (pl >= 0 ? 'is-good' : 'is-bad') + '">' + (pl >= 0 ? '+' : '') + eur(pl) + '</span>') +
+          '<button class="icon-btn" data-action="hist-del" data-at="' + esc(h.at) + '" aria-label="Borrar del historial">' + ICON.close + '</button>' +
+          '</div></div>';
+      }).join('');
+
+      var statsHtml = '<div class="stat-strip" style="--od-cols:4">' +
+        '<div class="cell"><span class="val mono">' + hist.length + '</span><span class="lab">pedidos</span></div>' +
+        '<div class="cell"><span class="val mono">' + settled + '</span><span class="lab">resueltos</span></div>' +
+        '<div class="cell"><span class="val mono">' + (settled ? Math.round((won / settled) * 100) : '—') + '%</span><span class="lab">aciertos</span></div>' +
+        '<div class="cell"><span class="val mono ' + (totalReturned - totalStaked >= 0 ? 'is-good' : 'is-bad') + '">' + (totalStaked ? (totalReturned - totalStaked >= 0 ? '+' : '') + eur(totalReturned - totalStaked) : '—') + '</span><span class="lab">balance</span></div>' +
+        '</div>';
+
+      return appBar('Temporada ' + SNAP.season + '/' + String(Number(SNAP.season) + 1).slice(-2), 'Historial de pedidos') +
+        '<div class="od-scroll" id="screen"><div class="screen">' +
+        '<section class="block">' + statsHtml + '</section>' +
+        '<section class="card"><div class="h"><h2>Combinadas guardadas</h2><span class="pill is-flat">' + hist.length + '</span></div>' +
+        '<div class="hist-list">' + rows + '</div>' +
+        '<p class="note">Cada combinada se evalúa con los resultados reales. El balance usa el importe y la cuota combinada de la casa en el momento de guardar.</p></section></div></div>';
     }
 
     function screenTabla() {
@@ -6175,6 +6356,7 @@ function sheetOdds(l, m) {
     function render() {
       var html = state.tab === 'pronosticos' ? screenPronosticos()
         : state.tab === 'combinadas' ? screenCombinadas()
+        : state.tab === 'historial' ? screenHistorial()
         : state.tab === 'tabla' ? screenTabla()
         : state.tab === 'modelo' ? screenModelo()
         : screenJornadas();
@@ -6384,6 +6566,11 @@ if (action === 'cat') {
         next.match = null;
         next.club = null;
         go(next);
+        return;
+      }
+      if (action === 'theme') {
+        toggleTheme();
+        render();
         return;
       }
       if (action === 'pick') {
@@ -7225,6 +7412,10 @@ if (action === 'cat') {
     state = readHash();
     if (!location.hash) { writeHash(true); }
     render();
+    setTimeout(function() {
+      var btn = document.getElementById('themeToggle');
+      if (btn) { btn.textContent = THEME === 'light' ? '🌙' : '☀️'; btn.setAttribute('aria-label', THEME === 'light' ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'); }
+    }, 0);
     autoRefreshOnBoot();
     scheduleRoundEnd();
     // While the app stays open, retry the automatic refresh every 20 minutes.
