@@ -10,6 +10,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#2fd98a" />
+  <meta name="description" content="Predicciones y combinadas de fútbol con cuotas en tiempo real" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <link rel="manifest" href="manifest.json" />
   <title>Super Tipsters Oscar</title>
   <style>
     /* OD-LAYOUT-PRIMITIVES v1 — structure only: display, flex/grid, overflow, wrapping, ratio.
@@ -318,6 +323,7 @@
       outline: 2px solid var(--accent);
       outline-offset: 2px;
       border-radius: var(--r-sm);
+      box-shadow: 0 0 0 4px oklch(79% 0.155 152 / 0.3);
     }
 
     .app-bar {
@@ -957,6 +963,11 @@
     .stake-input { max-width: 108px; text-align: right; }
     .stake-input:focus, .sync-input:focus { outline: none; border-color: var(--accent); }
     .stake-return { font-size: 13.5px; font-weight: 650; color: var(--accent); }
+    .stake-profit { font-size: 11.5px; color: var(--muted); margin-left: 4px; }
+    .stake-profit.positive { color: var(--accent); }
+    .stake-profit.negative { color: var(--red); }
+    .stake-profit.positive { color: var(--accent); }
+    .stake-profit.negative { color: var(--red); }
     .sync-input { margin: 4px 0 10px; font-size: 13px; }
     .pick-row .stake-row { margin-top: 8px; }
     .leg {
@@ -1051,7 +1062,7 @@
     <span class="hardware-button power" aria-hidden="true"></span>
 
     <section class="phone-screen" data-phone-screen>
-      <main class="phone-content" data-phone-content>
+      <main class="phone-content" data-phone-content role="main" aria-label="Contenido de la aplicación">
         <!-- APP CONTENT START -->
         <div class="app" id="app"></div>
         <!-- APP CONTENT END -->
@@ -4205,7 +4216,7 @@
         '<div class="od-scroll screen"><div class="empty">' +
         '<span class="t">No se pudo leer el snapshot</span>' +
         '<p>El archivo data/season-2026-27.json no está incrustado en esta página. Regenera el snapshot con tools/refresh-data.ps1 y recarga.</p>' +
-        '<button class="btn" data-action="reload">Recargar</button>' +
+        '<button class="btn" data-action="reload" aria-label="Recargar datos">Recargar</button>' +
         '</div></div><div></div></div>';
       return;
     }
@@ -4451,8 +4462,7 @@ return '<rect class="bm-badge" x="' + m.badge[0] + '" y="' + m.badge[1] + '" wid
     function crest(team, size) {
       var s = size || 'var(--crest)';
       if (team.crest) {
-        return '<span class="crest-tile" style="--crest:' + s + '"><img class="od-media" src="' + esc(team.crest) +
-          '" width="' + (team.cw || 48) + '" height="' + (team.ch || 48) + '" alt="" loading="lazy" decoding="async"></span>';
+return '<span class="crest-tile" style="--crest:' + s + '"><img class="od-media" src="' + esc(team.crest) + '" width="' + (team.cw || 48) + '" height="' + (team.ch || 48) + '" alt="' + esc(team.name) + '" loading="lazy" decoding="async"></span>';
       }
       return '<span class="crest-tile monogram" style="--crest:' + s + '" aria-hidden="true">' + esc(team.tla || '—') + '</span>';
     }
@@ -4806,6 +4816,10 @@ function bookPrice(m, key) {
 
     var COMBO_SIZES = [2, 3, 4, 5, 6, 7, 10];
 
+    /**
+     * Genera el pool de partidos disponibles para una categoría de mercado
+     * Ordena por: tiene cuota > sin cuota, mayor probabilidad primero, luego fecha
+     */
     function comboPool(cat) {
       var rows = [];
       var now = Date.now();
@@ -4813,6 +4827,7 @@ function bookPrice(m, key) {
         var l = LG[code];
         if (!l || !l.matches) { return; }
         l.matches.forEach(function (m) {
+          // Solo partidos próximos con fecha futura
           if (!isUpcoming(m)) { return; }
           if (new Date(m.utc).getTime() < now) { return; }
           var mk = markets(l, m);
@@ -4822,7 +4837,8 @@ function bookPrice(m, key) {
           rows.push({ lg: l, m: m, sel: sel, price: bookPrice(m, sel.priceKey) });
         });
       });
-rows.sort(function (a, b) {
+      // Ordenar: primero las que tienen cuota, luego por probabilidad descendente, luego por fecha
+      rows.sort(function (a, b) {
         if (!!a.price !== !!b.price) { return a.price ? -1 : 1; }
         if (a.sel.p !== b.sel.p) { return b.sel.p - a.sel.p; }
         if (a.m.utc !== b.m.utc) { return a.m.utc < b.m.utc ? -1 : 1; }
@@ -4831,11 +4847,28 @@ rows.sort(function (a, b) {
       return rows;
     }
 
+    /**
+     * Selecciona las primeras N patas del pool para formar una combinada
+     * @param {Array} rows - Pool de partidos ordenados
+     * @param {number} size - Tamaño deseado de la combinada
+     * @returns {Array|null} - Array de patas o null si no hay suficientes
+     */
     function comboFor(rows, size) {
-      return rows.length < size ? null : rows.slice(0, size);
+      if (!Array.isArray(rows) || rows.length < size) {
+        return null;
+      }
+      return rows.slice(0, size);
     }
 
+    /**
+     * Calcula probabilidades y cuota combinada para un conjunto de patas
+     * @param {Array} legs - Patas de la combinada
+     * @returns {{p: number, price: number|null}} - Probabilidad y cuota combinada
+     */
     function comboTotals(legs) {
+      if (!legs || legs.length === 0) {
+        return { p: 0, price: null };
+      }
       var p = 1, price = 1, complete = true;
       legs.forEach(function (x) {
         p *= x.sel.p;
@@ -4859,7 +4892,7 @@ function oddsTag() {
         var H = x.lg.teamById[x.m.h], A = x.lg.teamById[x.m.a];
         var price = x.price ? dec(x.price) : dec(1 / x.sel.p) + ' est.';
         var when = dfDay.format(new Date(x.m.utc)) + ' · ' + dfTime.format(new Date(x.m.utc));
-        return '<li><button class="leg" data-action="open" data-match="' + x.m.id + '">' +
+        return '<li><button class="leg" data-action="open" data-match="' + x.m.id + '" aria-label="Ver detalle de ' + esc(H.name) + ' contra ' + esc(A.name) + '">' +
           '<span class="idx mono">' + (i + 1) + '</span>' +
           '<span class="od-field"><span class="t od-truncate">' + esc(H.name) + ' — ' + esc(A.name) + '</span>' +
           '<span class="meta od-truncate">' + esc(x.lg.code) + ' · ' + esc(x.sel.label) + ' · ' + price + ' · ' + esc(when) + '</span></span>' +
@@ -5082,7 +5115,7 @@ var body = '<div class="rail-label"><span class="t">Mercado</span><span class="m
       if (!legs.length) {
         summary = '<div class="empty"><span class="t">Todavía no hay patas</span>' +
           '<p>Elige un partido de los <b>' + total + '</b> que tienen cuota de mercado publicada y decide en qué mercado betting: 1, X, 2, más o menos de 2,5 goles, o la línea de 1,5.</p>' +
-          '<button class="btn" data-action="add-open">Añadir partido</button></div>';
+          '<button class="btn" data-action="add-open" aria-label="Añadir partido a la combinada">Añadir partido</button></div>';
       } else {
         var top = books.slice(0, 6);
         var missing = legs.filter(function (x) { return !x.sel.priced; });
@@ -5117,9 +5150,9 @@ var body = '<div class="rail-label"><span class="t">Mercado</span><span class="m
           bestLine + grid +
           stakeRow('ticket', books.length ? books[0].price : null, ticketStake(), 'ticket-return', '') +
           missingNote + lowNote +
-          '<div class="ticket-actions"><button class="btn is-ghost btn-sm" data-action="add-open">' + ICON.combo + '<span>Añadir partido</span></button>' +
-          '<button class="btn is-ghost btn-sm" data-action="ticket-archive">' + ICON.save + '<span>Guardar en historial</span></button>' +
-          '<button class="btn is-ghost btn-sm" data-action="ticket-clear">Vaciar</button></div>' +
+          '<div class="ticket-actions"><button class="btn is-ghost btn-sm" data-action="add-open" aria-label="Añadir partido a la combinada">' + ICON.combo + '<span>Añadir partido</span></button>' +
+           '<button class="btn is-ghost btn-sm" data-action="ticket-archive" aria-label="Guardar combinada en historial">' + ICON.save + '<span>Guardar en historial</span></button>' +
+           '<button class="btn is-ghost btn-sm" data-action="ticket-clear" aria-label="Vaciar combinada actual">Vaciar</button></div>' +
           '</article>';
       }
 
@@ -5170,7 +5203,7 @@ var body = '<div class="rail-label"><span class="t">Mercado</span><span class="m
           var H = r.lg.teamById[r.m.h], A = r.lg.teamById[r.m.a];
           var t = new Date(r.m.utc);
           var nb = Object.keys(oddsEntry(r.m.id).books).length;
-          return '<li><button class="leg" data-action="tadd" data-mid="' + r.m.id + '">' +
+          return '<li><button class="leg" data-action="tadd" data-mid="' + r.m.id + '" aria-label="Añadir ' + esc(r.m.h) + ' contra ' + esc(r.m.a) + ' a la combinada">' +
             '<span class="idx mono">+</span>' +
             '<span class="od-field"><span class="t od-truncate">' + esc(H.name) + ' — ' + esc(A.name) + '</span>' +
             '<span class="meta od-truncate">' + esc(r.lg.code) + ' · ' + esc(dfDM.format(t)) + ' ' + esc(dfTime.format(t)) + ' · ' + nb + ' casas</span></span>' +
@@ -5550,7 +5583,7 @@ function shareOpen(size) { shareOpenData(comboShareData(size)); }
         rows.splice(3, 0, { k: 'more', ic: ICON.share, t: 'Más apps', h: 'Hoja de compartir del sistema' });
       }
       var list = '<div class="share-list">' + rows.map(function (r) {
-        return '<button class="share-row" data-action="share-do" data-kind="' + r.k + '">' +
+        return '<button class="share-row" data-action="share-do" data-kind="' + r.k + '" aria-label="' + esc(r.t) + '">' +
           '<span class="mark">' + r.ic + '</span>' +
           '<span class="od-field"><span class="t2">' + esc(r.t) + '</span>' +
           '<span class="hint">' + esc(r.h) + '</span></span></button>';
@@ -5558,7 +5591,7 @@ function shareOpen(size) { shareOpenData(comboShareData(size)); }
 
       var shot = d.url
         ? '<img class="share-preview" src="' + d.url + '" width="1080" height="' +
-          (476 + d.legs.length * 122 + 148) + '" alt="Tarjeta con la combinada de ' + d.size + ' partidos">'
+          (476 + d.legs.length * 122 + 148) + '" alt="Tarjeta con la combinada de ' + d.size + ' partidos" loading="lazy" decoding="async">'
         : '<p class="note" style="margin:0">Tu navegador no ha permitido generar la imagen. Puedes copiar el texto y enviarlo igualmente.</p>';
 
       return '<div class="sheet-layer">' +
@@ -5637,7 +5670,7 @@ function shareOpen(size) { shareOpenData(comboShareData(size)); }
           '<p class="note">El acierto se evalúa con el resultado real cuando la jornada está jugada. La probabilidad es la que tenía el modelo al guardarlo.</p></section>'
         : '<div class="empty"><span class="t">Todavía no has guardado ningún pronóstico</span>' +
           '<p>Abre un partido por jugar, toca el pronóstico que quieras seguir (1, X, 2, más o menos de 1,5 y de 2,5 goles, ambos marcan) y aparecerá aquí con su probabilidad.</p>' +
-          '<button class="btn" data-action="next-md">Ir a la próxima jornada</button></div>';
+          '<button class="btn" data-action="next-md" aria-label="Ir a la próxima jornada">Ir a la próxima jornada</button></div>';
 
       return appBar('Temporada ' + SNAP.season + '/' + String(Number(SNAP.season) + 1).slice(-2), 'Mis pronósticos') +
         '<div class="od-scroll" id="screen"><div class="screen">' +
@@ -6466,7 +6499,23 @@ if (action === 'cat') {
       if (!(stake > 0)) { stake = 0; }
       var price = parseFloat(el.dataset.price) || 0;
       var out = el.dataset.out ? document.getElementById(el.dataset.out) : null;
-      if (out) { out.textContent = (stake > 0 && price > 1) ? eur(stake * price) : '—'; }
+      if (out) { 
+        var ret = stake * price;
+        var profit = ret - stake;
+        var profitClass = profit > 0 ? 'positive' : (profit < 0 ? 'negative' : '');
+        out.textContent = (stake > 0 && price > 1) ? eur(ret) : '—';
+        // Update profit display if exists
+        var profitEl = document.getElementById(outId + '-profit');
+        if (profitEl) {
+          if (stake > 0 && price > 1) {
+            profitEl.textContent = eur(profit);
+            profitEl.className = 'stake-profit ' + profitClass;
+          } else {
+            profitEl.textContent = '—';
+            profitEl.className = 'stake-profit';
+          }
+        }
+      }
       if (kind === 'pick') {
         var pid = parseInt(el.dataset.match, 10);
         if (picks[pid]) {
@@ -7100,12 +7149,18 @@ if (action === 'cat') {
 
     // Shared markup: an € field plus the live return it produces at [attr] price.
     function stakeRow(kind, price, value, outId, extra) {
+      var ret = (price && value) ? value * price : 0;
+      var profit = ret - (value || 0);
+      var profitClass = profit > 0 ? 'positive' : (profit < 0 ? 'negative' : '');
+      var profitHtml = (price && value && profit !== 0)
+        ? '<span class="stake-profit ' + profitClass + '" id="' + outId + '-profit">' + eur(profit) + '</span>'
+        : '<span class="stake-profit" id="' + outId + '-profit">—</span>';
       return '<div class="stake-row"><label class="stake-lab">Importe</label>' +
         '<input class="stake-input" type="number" inputmode="decimal" min="0" step="0.5"' +
         ' data-stake="' + kind + '"' + (extra || '') + ' data-price="' + (price || '') + '"' +
         ' data-out="' + outId + '" value="' + (value == null ? '' : value) + '" placeholder="0" aria-label="Importe apostado en euros">' +
         '<span class="stake-return mono" id="' + outId + '">' +
-        ((price && value) ? eur(value * price) : '—') + '</span></div>';
+        ((price && value) ? eur(ret) : '—') + '</span>' + profitHtml + '</div>';
     }
 
     function syncCardHtml() {
@@ -7119,7 +7174,7 @@ if (action === 'cat') {
         '<dl class="kv"><dt>Última actualización</dt><dd class="mono">' + esc(when) + '</dd>' +
         '<dt>football-data.org</dt><dd>' + (hasFd ? 'clave guardada' : 'sin clave') + '</dd>' +
         '<dt>The Odds API</dt><dd>' + (hasOd ? 'clave guardada' : 'sin clave') + '</dd></dl>' +
-        '<div class="btn-row"><button class="btn" data-action="sync-open">' + ICON.save + '<span>Actualizar ahora</span></button></div>' +
+        '<div class="btn-row"><button class="btn" data-action="sync-open" aria-label="Abrir configuración de sincronización">' + ICON.save + '<span>Actualizar ahora</span></button></div>' +
         '<p class="note">Sin clave la app sigue funcionando con el snapshot incluido. Con clave intenta actualizar sola al abrir, como mucho una vez cada ' + REFRESH_WINDOW_H + ' horas.</p></section>';
     }
 
@@ -7128,7 +7183,7 @@ if (action === 'cat') {
       return '<section class="card"><div class="h"><h2>Versión de la app</h2>' +
         '<span class="pill is-flat">' + (native ? 'Android' : 'vista web') + '</span></div>' +
         '<p>La aplicación comprueba sola si hay una versión nueva cada vez que la abres. Si quieres forzar la comprobación ahora, pulsa el botón.</p>' +
-        '<div class="btn-row"><button class="btn" data-action="update-check"' + (native ? '' : ' disabled') + '>' + ICON.model + '<span>Buscar versión nueva</span></button></div>' +
+        '<div class="btn-row"><button class="btn" data-action="update-check"' + (native ? '' : ' disabled') + ' aria-label="Buscar versión nueva">' + ICON.model + '<span>Buscar versión nueva</span></button></div>' +
         (native ? '' : '<p class="note">Esta opción solo funciona dentro de la app instalada en Android.</p>') +
         '</section>';
     }
@@ -7155,8 +7210,8 @@ if (action === 'cat') {
         '<input class="sync-input" id="sync-odds" type="text" autocomplete="off" spellcheck="false" value="' + esc(od) + '" placeholder="api key">' +
         status +
         '<div class="btn-row" style="margin-top:12px">' +
-        '<button class="btn" data-action="sync-run"' + (syncState.busy ? ' disabled' : '') + '>' + (syncState.busy ? 'Actualizando…' : 'Actualizar ahora') + '</button>' +
-        '<button class="btn is-ghost" data-action="sync-save">Guardar claves</button>' +
+        '<button class="btn" data-action="sync-run"' + (syncState.busy ? ' disabled' : '') + ' aria-label="' + (syncState.busy ? 'Sincronizando' : 'Ejecutar sincronización') + '">' + (syncState.busy ? 'Actualizando…' : 'Actualizar ahora') + '</button>' +
+        '<button class="btn is-ghost" data-action="sync-save" aria-label="Guardar claves de API">Guardar claves</button>' +
         '</div></section>' +
         '<section class="card"><h2>Qué se actualiza</h2><ul class="reason">' +
         '<li><span><b>Resultados y clasificación</b> de las 5 grandes ligas desde football-data.org (5 peticiones).</span></li>' +
@@ -7176,5 +7231,10 @@ if (action === 'cat') {
     setInterval(autoRefreshOnBoot, 20 * 60 * 1000);
   })();
   </script>
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
 </body>
 </html>
