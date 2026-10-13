@@ -529,13 +529,53 @@
     .probbar .seg { display: block; height: 5px; border-radius: 2px; }
 
     /* Product/odds grid in match cards */
-    .odds-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 4px; }
-    .odds-item { padding: 6px 8px; border: 1px solid var(--line-soft); border-radius: var(--r-md); background: var(--surface-2); text-align: center; }
-    .odds-item .odd-name { font-size: 10px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .odds-item .odd-val { font-size: 13px; font-weight: 600; color: var(--accent); }
-    .seg-h { background: var(--accent); }
-    .seg-d { background: var(--amber); }
-    .seg-a { background: var(--red); }
+    .odds-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .odds-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      min-width: 0;
+      padding: 8px 6px;
+      border: 1px solid var(--line-soft);
+      border-radius: var(--r-md);
+      background: var(--surface-2);
+      transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+    }
+    .odds-item:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+    .odds-item:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+    .odds-item .odd-name {
+      font-size: 9px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    .odds-item .odd-val {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1;
+    }
+    .odds-item.is-home .odd-val { color: var(--accent); }
+    .odds-item.is-draw .odd-val { color: var(--amber); }
+    .odds-item.is-away .odd-val { color: var(--red); }
     /* Theme toggle button */
     .theme-toggle {
       flex: none;
@@ -566,31 +606,64 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 10px;
-      margin-top: 12px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line-soft);
     }
     .product-card {
-      display: grid;
-      gap: 8px;
-      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 14px 10px;
       border: 1px solid var(--line-soft);
       border-radius: var(--r-lg);
       background: var(--surface);
       text-align: center;
+      transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+    }
+    .product-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+      border-color: var(--accent);
+    }
+    .product-card:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
     }
     .product-card .product-name {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 600;
       color: var(--fg);
+      letter-spacing: 0.02em;
     }
     .product-card .product-price {
-      font-size: 16px;
-      font-weight: 700;
+      font-size: 20px;
+      font-weight: 800;
       color: var(--accent);
+      letter-spacing: -0.02em;
+      line-height: 1;
     }
     .product-card .product-desc {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--muted);
-      line-height: 1.4;
+      line-height: 1.3;
+    }
+    .odds-sel-group {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line-soft);
+    }
+    .odds-sel-group:first-of-type {
+      margin-top: 14px;
+      padding-top: 14px;
+    }
+    .odds-sel-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--fg);
+      margin: 0 0 10px 0;
+      letter-spacing: 0.02em;
     }
 
     .stat-strip {
@@ -1132,10 +1205,19 @@
     .spark-zero { stroke: var(--line); stroke-width: 1; stroke-dasharray: 3 3; }
     .hit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-top: 12px; }
     .hit-col h3 { font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
-    .hist-list { display: grid; gap: 2px; margin-top: 8px; }
-    .hist-row { display: flex; gap: 10px; align-items: flex-start; padding: 12px 0; border-top: 1px solid var(--line-soft); }
-    .hist-row:first-child { border-top: 0; }
-    .hist-row .body { min-width: 0; flex: 1; display: grid; gap: 2px; }
+    .hist-list { display: grid; gap: 8px; margin-top: 12px; }
+    .hist-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 14px 12px;
+      border: 1px solid var(--line-soft);
+      border-radius: var(--r-md);
+      background: var(--surface);
+      transition: border-color var(--dur) var(--ease);
+    }
+    .hist-row:hover { border-color: var(--accent); }
+    .hist-row .body { min-width: 0; flex: 1; display: grid; gap: 3px; }
     .hist-row .ttl { font-size: .86rem; line-height: 1.3; }
   </style>
 </head>
@@ -4805,11 +4887,11 @@ function readHash() {
         var h = selPrice(entry.books[k], 'h');
         var d = selPrice(entry.books[k], 'd');
         var a = selPrice(entry.books[k], 'a');
-        return '<div class="odds-item"><span class="odd-name">' + esc(name) + '</span>' +
+        return '<div class="odds-item is-home"><span class="odd-name">' + esc(name) + '</span>' +
           '<span class="odd-val">' + (h ? dec(h) : '—') + '</span></div>' +
-          '<div class="odds-item"><span class="odd-name">X</span>' +
+          '<div class="odds-item is-draw"><span class="odd-name">X</span>' +
           '<span class="odd-val">' + (d ? dec(d) : '—') + '</span></div>' +
-          '<div class="odds-item"><span class="odd-name">2</span>' +
+          '<div class="odds-item is-away"><span class="odd-name">2</span>' +
           '<span class="odd-val">' + (a ? dec(a) : '—') + '</span></div>';
       }).join('');
       return '<div class="odds-grid">' + items + '</div>';
@@ -6122,21 +6204,38 @@ function sheetOdds(l, m) {
           esc(ODDS.source || 'la fuente') + ' no devuelve mercado para este partido. Solo queda la estimaci\u00f3n del modelo.</p></section>';
       }
       var bk = state.book || ODDS.primary;
-      var rows = sels.map(function (s) {
-        var price = selPrice(e.books[bk], s.id);
-        var val = (typeof price === 'number' && price > 1)
-          ? dec(price) + ' <span class="meta">' + pct(1 / price) + '</span>'
-          : '<span class="od-muted">' + dec(1 / s.p) + ' est.</span>';
-        return '<div class="kv-line"><span class="lbl">' + esc(s.label) + '</span>' +
-          '<span class="mono od-nowrap">' + val + '</span></div>';
+      // Product cards: show odds from each bookmaker for each selection
+      var cardsBySel = sels.map(function (s) {
+        var cards = ODDS_KEYS.filter(function (k) {
+          var p = selPrice(e.books[k], s.id);
+          return p != null && p > 1;
+        }).slice(0, 8).map(function (k) {
+          var p = selPrice(e.books[k], s.id);
+          var isPrimary = k === bk;
+          var name = ODDS.bookName[k] || k;
+          var shortName = name.length > 10 ? name.substring(0, 9) + '…' : name;
+          return '<div class="product-card"' +
+            (isPrimary ? ' style="border-color:var(--accent);background:var(--accent-dim)"' : '') +
+            ' aria-label="' + esc(name) + ': cuota ' + dec(p) + '">' +
+            '<span class="product-name">' + esc(shortName) + (isPrimary ? ' ★' : '') + '</span>' +
+            '<span class="product-price mono">' + dec(p) + '</span>' +
+            '<span class="product-desc">' + pct(1 / p) + ' impl.</span>' +
+            '</div>';
+        }).join('');
+        if (!cards) return '';
+        return '<div class="odds-sel-group">' +
+          '<h3 class="odds-sel-label">' + esc(s.label) + '</h3>' +
+          '<div class="product-grid">' + cards + '</div>' +
+          '</div>';
       }).join('');
       var tags = ODDS_KEYS.filter(function (k) {
         return sels.some(function (s) { return selPrice(e.books[k], s.id) != null; });
       }).slice(0, 12).map(function (k) {
         return '<span class="price-tag mono">' + esc(ODDS.bookName[k] || k) + '</span>';
       }).join('');
-      return head + rows +
+      return head +
         (tags ? '<div class="price-row">' + tags + '</div>' : '') +
+        (cardsBySel ? '<div class="product-cards-section">' + cardsBySel + '</div>' : '') +
         '<p class="note">Cotas decimales de <b>' + esc(ODDS.bookName[bk] || bk) + '</b> v\u00eda ' +
         esc(ODDS.source || '-') + ', consulta del ' + esc(when || '-') +
         '. La cifra entre par\u00e9ntesis es la probabilidad impl\u00edcita (1 \u00f7 cuota). ' +
