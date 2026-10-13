@@ -4779,6 +4779,9 @@ function readHash() {
       if (next.tab === 'combinadas') {
         if (parts[1] && CATS.some(function (c) { return c.id === parts[1]; })) { next.cat = parts[1]; }
         if (parts[2]) { next.match = parseInt(parts[2], 10) || null; }
+      } else if (next.tab === 'historial') {
+        // historial doesn't need league/md, just use defaults
+        next.league = state.league || 'PD';
       } else {
         if (parts[1] && LG[parts[1]]) { next.league = parts[1]; }
         if (parts[2]) { next.md = parseInt(parts[2], 10) || 0; }
