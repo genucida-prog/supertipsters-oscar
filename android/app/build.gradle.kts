@@ -24,8 +24,8 @@ android {
         applicationId = "com.supertipsters.oscar"
         minSdk = 24
         targetSdk = 34
-        versionCode = 4
-        versionName = "1.0.3"
+        versionCode = 7
+        versionName = "1.0.6"
     }
 
     signingConfigs {

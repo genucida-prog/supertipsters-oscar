@@ -93,6 +93,8 @@ class MainActivity : ComponentActivity() {
             // on every restart.
             domStorageEnabled = true
             databaseEnabled = true
+            useWideViewPort = true
+            loadWithOverviewMode = true
             // Assets are served through the loader, not the filesystem.
             allowFileAccess = false
             allowContentAccess = false
