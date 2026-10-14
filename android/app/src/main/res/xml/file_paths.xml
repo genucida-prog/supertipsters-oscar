@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Exposes only the cache sub-folder that holds the APK downloaded from
+  GitHub Releases, so the system installer can read it through FileProvider.
+  Everything else in the app stays private.
+-->
+<paths>
+    <cache-path
+        name="updates"
+        path="." />
+</paths>

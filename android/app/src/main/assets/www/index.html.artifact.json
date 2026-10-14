@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "android/app/src/main/assets/www/index.html",
+  "entry": "android/app/src/main/assets/www/index.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-10-04T19:27:30.822Z",
+  "updatedAt": "2026-10-04T19:27:30.822Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

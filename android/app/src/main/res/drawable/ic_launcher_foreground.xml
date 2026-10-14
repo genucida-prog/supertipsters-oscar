@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Adaptive-icon foreground: the ink part of BRAND.mark only, because the
+  background layer already supplies the accent fill that BRAND's badge rect
+  would have provided.
+
+  Geometry is copied verbatim from index.html (BRAND.mark, 32-unit viewBox):
+    trend   M7.8,11.8 L13,9.4 L17.4,11.2 L23.4,7.4   stroke-width 2.3
+    ball    circle cx 16 cy 22 r 5.2                 stroke-width 2
+    pent    M16,19.82 L18.07,21.33 L17.28,23.76 L14.72,23.76 L13.93,21.33 Z
+
+  The group maps that 32-unit box onto the 66dp safe zone of the 108dp canvas:
+  scale 66/32 = 2.0625 about the pivot (16,16), then translate so the centre
+  lands on (54,54) -> translate = 54 - 16 = 38.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:pivotX="16"
+        android:pivotY="16"
+        android:scaleX="2.0625"
+        android:scaleY="2.0625"
+        android:translateX="38"
+        android:translateY="38">
+        <path
+            android:pathData="M7.8,11.8 L13,9.4 L17.4,11.2 L23.4,7.4"
+            android:fillColor="@android:color/transparent"
+            android:strokeColor="#021106"
+            android:strokeWidth="2.3"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <path
+            android:pathData="M10.8,22 a5.2,5.2 0 1,0 10.4,0 a5.2,5.2 0 1,0 -10.4,0 Z"
+            android:fillColor="@android:color/transparent"
+            android:strokeColor="#021106"
+            android:strokeWidth="2" />
+        <path
+            android:fillColor="#021106"
+            android:pathData="M16,19.82 L18.07,21.33 L17.28,23.76 L14.72,23.76 L13.93,21.33 Z" />
+    </group>
+</vector>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Super Tipsters Oscar</string>
+
+    <!-- Used by the WebView bridge when saving the combination card. -->
+    <string name="image_saved">Imagen guardada en Descargas</string>
+    <string name="image_save_failed">No se pudo guardar la imagen</string>
+    <string name="no_app_for_link">No hay ninguna app para abrir el enlace</string>
+    <string name="storage_permission_needed">Permite el acceso al almacenamiento para guardar la imagen</string>
+
+    <!-- GitHub release self-update. -->
+    <string name="update_title">Nueva versión disponible</string>
+    <string name="update_message">Hay una versión más reciente (%1$s). ¿Descargarla e instalarla ahora?</string>
+    <string name="update_now">Actualizar</string>
+    <string name="update_later">Después</string>
+    <string name="update_downloading">Descargando la actualización…</string>
+    <string name="update_failed">No se pudo descargar la actualización</string>
+    <string name="update_up_to_date">Ya tienes la última versión</string>
+
+    <!-- Matchday reminder notification. -->
+    <string name="notif_channel_name">Fin de jornada</string>
+    <string name="notif_permission_needed">Activa las notificaciones para avisarte del fin de jornada</string>
+
+    <!-- Home-screen widget. -->
+    <string name="widget_title">SUPER TIPSTERS OSCAR</string>
+</resources>
